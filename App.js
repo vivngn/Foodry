@@ -1,17 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
+import { fadeIn } from 'react-navigation-transitions';
 
 import MainScreen from './components/mainscreen';
+import MyPlaceScreen from './components/myplacescreen'
 
 //NOTE: 
 const RootStack = createStackNavigator(
   {
-    Main: MainScreen
-  },
-  {
-    initialRouteName: 'Main'
-  }
+    Main: {
+      screen: MainScreen
+    },
+    MyPlace: {
+      screen: MyPlaceScreen
+    }
+    },
+    {
+      initialRouteName: 'Main',
+       transitionConfig: () => fadeIn(),
+    }
 )
 
 
