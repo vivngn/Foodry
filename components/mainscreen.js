@@ -7,10 +7,12 @@ import {
   Text,
   FlatList, 
   Button,
+  TouchableWithoutFeedback
 } from "react-native";
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+import _ from 'lodash';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {test_data} from './test_data';
 const ITEM_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = Dimensions.get("window").height;
 
@@ -18,90 +20,18 @@ export default class MainScreen extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: [
-                {
-                    img:
-                    "https://pixabay.com/get/ed3cb00b2af11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e5bcbb_1280.jpg",
-                    location: "4635 Kingsway, Burnaby, BC V5H 4L3",
-                    food_name: "Sushi",
-                    cost: "$8.99",
-                    restaurant: "Sushi Garden"
-                },
-                {
-                    img: "https://pixabay.com/get/ea31b70620f11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e9b7b9_1280.jpg",
-                    location: "6082 Fraser St, Vancouver, BC V5W 2Z7",
-                    food_name: "Pizza",
-                    cost: "$15.99", 
-                    restaurant: "Pizza Hut"
-                },
-                {
-                    img:
-                    "https://pixabay.com/get/ed3cb00b2af11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e5bcbb_1280.jpg",
-                    location: "4635 Kingsway, Burnaby, BC V5H 4L3",
-                    food_name: "Sushi",
-                    cost: "$8.99",
-                    restaurant: "Sushi Garden"
-                },
-                {
-                    img: "https://pixabay.com/get/ea31b70620f11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e9b7b9_1280.jpg",
-                    location: "6082 Fraser St, Vancouver, BC V5W 2Z7",
-                    food_name: "Pizza",
-                    cost: "$15.99", 
-                    restaurant: "Pizza Hut"
-                },
-                {
-                    img:
-                    "https://pixabay.com/get/ed3cb00b2af11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e5bcbb_1280.jpg",
-                    location: "4635 Kingsway, Burnaby, BC V5H 4L3",
-                    food_name: "Sushi",
-                    cost: "$8.99",
-                    restaurant: "Sushi Garden"
-                },
-                {
-                    img: "https://pixabay.com/get/ea31b70620f11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e9b7b9_1280.jpg",
-                    location: "6082 Fraser St, Vancouver, BC V5W 2Z7",
-                    food_name: "Pizza",
-                    cost: "$15.99", 
-                    restaurant: "Pizza Hut"
-                }, {
-                    img:
-                    "https://pixabay.com/get/ed3cb00b2af11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e5bcbb_1280.jpg",
-                    location: "4635 Kingsway, Burnaby, BC V5H 4L3",
-                    food_name: "Sushi",
-                    cost: "$8.99",
-                    restaurant: "Sushi Garden"
-                },
-                {
-                    img: "https://pixabay.com/get/ea31b70620f11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e9b7b9_1280.jpg",
-                    location: "6082 Fraser St, Vancouver, BC V5W 2Z7",
-                    food_name: "Pizza",
-                    cost: "$15.99", 
-                    restaurant: "Pizza Hut"
-                }, {
-                    img:
-                    "https://pixabay.com/get/ed3cb00b2af11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e5bcbb_1280.jpg",
-                    location: "4635 Kingsway, Burnaby, BC V5H 4L3",
-                    food_name: "Sushi",
-                    cost: "$8.99",
-                    restaurant: "Sushi Garden"
-                },
-                {
-                    img: "https://pixabay.com/get/ea31b70620f11c22d2524518b74d4695e475e0d118ac104491f1c97ba1e9b7b9_1280.jpg",
-                    location: "6082 Fraser St, Vancouver, BC V5W 2Z7",
-                    food_name: "Pizza",
-                    cost: "$15.99", 
-                    restaurant: "Pizza Hut"
-                },
-                ],
+            data: test_data,
             column: 2,
             key: 1,
+            fullData: test_data
         }
     }
     static navigationOptions = ({ navigation }) => {
         return{
         title: 'My Foodry',
         headerStyle: {
-            backgroundColor: '#4C4949',
+            marginTop:-30,
+            backgroundColor: '#282828',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -110,25 +40,46 @@ export default class MainScreen extends React.Component {
         headerRight: (
             <Icon style={{textAlign: 'right', padding:15}} name="add-box" size={25} color="#fff" />
         ),
+        headerLeft: (
+            <Icon style={{textAlign: 'right', padding:15}} name="search" size={25} color="#fff" />
+        ),
     }
     };
-    onSwipeLeft(gestureState) {
-        const { navigation } = this.props;
-        navigation.navigate('MyPlace',{data: this.state.data});
-      }
+      handleSearch = (text) =>{
+        const data = _.filter(this.state.fullData, (lc) =>
+        {return lc.restaurant.toLowerCase().indexOf(text.toLowerCase()) != -1 || lc.food_name.toLowerCase().indexOf(text.toLowerCase()) != -1 || lc.cost.toLowerCase().indexOf(text.toLowerCase()) != -1})
+            this.setState({
+                data: data
+            });
+    };
     render() {
     const { column, key } = this.state;
     const { navigation } = this.props;
     const Bold = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
     return (
+        <View>
         <View style={styles.container}>
-        {/* <GestureRecognizer onSwipeLeft={(state) => this.onSwipeLeft(state)}> */}
-        <Button
-            title= "My Places"
-            onPress={() => {
-                navigation.navigate('MyPlace',{data: this.state.data});
-        }}
-                />
+        {/* <SearchBar containerStyle={{width: ITEM_WIDTH}} placeholder="Filter..." lightTheme onChangeText={this.handleSearch}/>  */}
+        <View style={{width: ITEM_WIDTH,
+    flexDirection: 'row',justifyContent: 'space-evenly'}}>
+     <TouchableWithoutFeedback  
+    onPress={() => {
+                this.setState({column: 2, key:2});
+              }}>
+    <View style={{width:ITEM_WIDTH/2}}>
+    <Icon style={{padding:5, textAlign:'center'}} name="grid-on" size={25} color="#000" />
+    </View>
+    </TouchableWithoutFeedback>
+    <Text></Text>
+    <TouchableWithoutFeedback  
+    onPress={() => {
+                this.setState({column: 1, key:1});
+              }}>
+    <View style={{width:ITEM_WIDTH/2}}>
+    <Icon style={{padding:5, textAlign:'center'}} name="check-box-outline-blank" size={25} color="#000" />
+    </View>
+    </TouchableWithoutFeedback>
+    </View>
         <FlatList
             data={this.state.data}
             keyExtractor={(x, i) => i}
@@ -152,22 +103,32 @@ export default class MainScreen extends React.Component {
                     textAlign:'center'
                 }}
                 >
-                <Bold>{item.food_name}</Bold> --- {item.cost} @ {item.restaurant}
+                <Bold>{item.food_name}</Bold> --- {item.cost} {"\n"}@ {item.restaurant}
                 </Text>
             </View>
             )}
         />
-        {/* </GestureRecognizer> */}
-        </View>
+        </View> 
+        </View> 
     );
     }
     }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // height: ITEM_HEIGHT,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingBottom: 60
+  },
+  shadow: {
+    bottom:-1, 
+    right:-1, 
+    padding:ITEM_WIDTH/20,
+    position:'absolute',
+    textShadowOffset:{width:1, height:2},
+    shadowColor:'#000000',
+    shadowOpacity:0.5        // Can't both be 0
+    },
 });

@@ -9,11 +9,11 @@ import {
   Button
 } from "react-native";
 import _ from 'lodash';
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {SearchBar} from 'react-native-elements';
 const ITEM_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = Dimensions.get("window").height;
+import {test_data} from './test_data';
 
 export default class MyPlaceScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -21,53 +21,43 @@ export default class MyPlaceScreen extends React.Component {
         title: 'My Places',
         // headerLeft: null,
         headerStyle: {
-            backgroundColor: '#4C4949',
+            backgroundColor: '#282828',
+            marginTop:-30,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
             fontWeight: 'bold',
         },
         headerRight: (
-            <Icon style={{textAlign: 'right', padding:15}} name="add-box" size={25} color="#fff" />
+            <Icon style={{textAlign: 'right', padding:15}} name="add-box" size={25} color="white" />
         ),
     }
     };
     constructor(props) {
         super(props)
         this.state = {
-            data: this.props.navigation.state.params.data,
+            data: test_data,
             column: 1,
             key: 1,
             query: "",
-            fullData: this.props.navigation.state.params.data,
+            fullData: test_data,
         };
     }
-    onSwipeRight(gestureState) {
-        const { navigation } = this.props;
-        navigation.navigate('Main');
-      }   
-
     handleSearch = (text) =>{
         const data = _.filter(this.state.fullData, (lc) =>
         {return lc.restaurant.toLowerCase().indexOf(text.toLowerCase()) != -1 || lc.location.toLowerCase().indexOf(text.toLowerCase()) != -1})
-        if (text == ""){
-            this.setState({
-                data: this.props.navigation.state.params.data
-            })
-        }else{
             this.setState({
                 data: data
             });
-        }
     };
     render() {
     const { navigation } = this.props;
     const { column, key } = this.state;
     const Bold = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
     return (
-        // <GestureRecognizer onSwipeRight={(state) => this.onSwipeRight(state)}>
-        <View style={styles.container}>
+        <View>
         <SearchBar style={{ flex: 1}} placeholder="Filter..." lightTheme onChangeText={this.handleSearch}/>
+        <View style={styles.container}>
         <FlatList
             data={this.state.data}
             keyExtractor={(x, i) => i}
@@ -87,8 +77,9 @@ export default class MyPlaceScreen extends React.Component {
             </View>
             )}
         />
+        {/* <Icon style={styles.shadow} name="add-circle" size={ITEM_WIDTH/6} color="#4C4949" />         */}
         </View>
-        // </GestureRecognizer>
+        </View>
     );
     }
     }
@@ -97,5 +88,14 @@ const styles = StyleSheet.create({
   container: {
     height: ITEM_HEIGHT,
     backgroundColor: "#fff",
-  }
+  },
+  shadow: {
+    bottom:-1, 
+    right:-1, 
+    padding:ITEM_WIDTH/20,
+    position:'absolute',
+    textShadowOffset:{width:1, height:2},
+    shadowColor:'#000000',
+    shadowOpacity:0.5        // Can't both be 0
+    },
 });
