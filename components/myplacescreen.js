@@ -9,7 +9,7 @@ import {
   Button
 } from "react-native";
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import IconM from 'react-native-vector-icons/MaterialIcons';
 import {SearchBar} from 'react-native-elements';
 const ITEM_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = Dimensions.get("window").height;
@@ -22,14 +22,17 @@ export default class MyPlaceScreen extends React.Component {
         // headerLeft: null,
         headerStyle: {
             backgroundColor: '#282828',
-            marginTop:-30,
+            marginTop:-25,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
             fontWeight: 'bold',
         },
+        headerLeft: (
+            <SearchBar containerStyle={{width: ITEM_WIDTH}} placeholder="Filter..."  onChangeText={navigation.getParam('increaseCount')}/>
+        ),
         headerRight: (
-            <Icon style={{textAlign: 'right', padding:15}} name="add-box" size={25} color="white" />
+            <IconM style={{textAlign: 'right', padding:15}} name="add" size={25} color="white" />
         ),
     }
     };
@@ -43,7 +46,10 @@ export default class MyPlaceScreen extends React.Component {
             fullData: test_data,
         };
     }
-    handleSearch = (text) =>{
+    componentDidMount() {
+        this.props.navigation.setParams({ increaseCount: this._handleSearch });
+      }
+    _handleSearch = (text) =>{
         const data = _.filter(this.state.fullData, (lc) =>
         {return lc.restaurant.toLowerCase().indexOf(text.toLowerCase()) != -1 || lc.location.toLowerCase().indexOf(text.toLowerCase()) != -1})
             this.setState({
@@ -56,7 +62,7 @@ export default class MyPlaceScreen extends React.Component {
     const Bold = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
     return (
         <View>
-        <SearchBar style={{ flex: 1}} placeholder="Filter..." lightTheme onChangeText={this.handleSearch}/>
+        {/* <SearchBar style={{ flex: 1}} placeholder="Filter..." lightTheme onChangeText={this.handleSearch}/> */}
         <View style={styles.container}>
         <FlatList
             data={this.state.data}
@@ -64,7 +70,7 @@ export default class MyPlaceScreen extends React.Component {
             key={key}
             numColumns={column}
             renderItem={({ item }) => (
-            <View style={{backgroundColor: '#DCDCDC', margin: 2, borderRadius: 5}}>
+            <View style={{backgroundColor: '#DCDCDC', marginVertical:2, borderRadius: 5}}>
                 <Text
                 style={{
                     width: (ITEM_WIDTH - 5 * column) / column,
@@ -86,16 +92,8 @@ export default class MyPlaceScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: ITEM_HEIGHT,
+    // height: ITEM_HEIGHT,
     backgroundColor: "#fff",
-  },
-  shadow: {
-    bottom:-1, 
-    right:-1, 
-    padding:ITEM_WIDTH/20,
-    position:'absolute',
-    textShadowOffset:{width:1, height:2},
-    shadowColor:'#000000',
-    shadowOpacity:0.5        // Can't both be 0
-    },
+    // paddingBottom: 10
+  }
 });
