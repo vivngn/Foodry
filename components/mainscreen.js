@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   container: {
     // height: ITEM_HEIGHT,
     backgroundColor: "#fff",
-    alignItems: "flex-start",
     justifyContent: "center",
     paddingBottom: 40
   }
